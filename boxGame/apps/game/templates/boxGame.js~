@@ -1,0 +1,173 @@
+$(document).ready(function() {
+    $('#goal-button').hide();
+    $('.hs').hide();
+    $('.main').hide();
+    $('.gameover').hide();
+    $('.splash').fadeIn('500');
+    $('.return-splash').hide();
+    // on the main page load we show the splash screen 
+    // and register start and highscores for clicks
+    $('.new').click( function() {
+        $('.splash').fadeOut( '1000');
+        setTimeout(function(){$('.main').fadeIn('1000')},1000);
+    });
+    
+    $('#start-button').click( function() {
+		game.startGame()
+    });
+    
+    $('.return-splash').click( function() {
+        $('.main').fadeOut('1000');
+        setTimeout(function(){$('.splash').fadeIn('1000')},1000);
+    });
+    
+    $('.highscore').click( function() {
+    		window.location = "/highscore";
+    });
+    
+});
+
+function initDivMouseOver( elementId )   {
+	var div = document.getElementById(elementId);
+	div.mouseIsOver = false;
+	div.onmouseover = function()   {
+	  return true;
+	};
+	div.onmouseout = function()   {
+	  return false;
+	}
+}
+
+function getXY( el ) {
+    var _x = 0;
+    var _y = 0;
+    while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+        _x += el.offsetLeft - el.scrollLeft;
+        _y += el.offsetTop - el.scrollTop;
+        el = el.parentNode;
+    }
+    return { x: _x, y: _y };
+}
+
+
+var GameOver = {
+	    
+    gameOver: function() {
+        $('.main').fadeOut('slow', function() {
+            $.ajax({
+                url: "{% url gameover %}",
+                data: {'timepassed': game.timepassed },
+                type: 'post',
+                async: 'false',
+                success: function(data) {
+                	console.log(data);
+                    $('.gameover').html(data);
+                    $('.gameover').show();
+                    gameOver.button_events();
+                },
+                error: function () {
+                    console.log("ERROR: gameover");
+                },
+            });
+        });
+    },
+    
+    button_events: function() {
+        $('.playagain').click(function() {
+            console.log("restarting game");
+            $('.gameover').fadeOut('slow', function() {
+                game.startGame();
+            });
+        });
+        $('.hs_submit').click(function() {
+            console.log("hs_submit clicked");
+            // simple length check before they
+            // submit
+            var username = $('#id_username').val();
+            alert(username);
+            if (username.length > 20 || username.length < 3) {
+                console.log("invalid username: " + username.length);
+                $('.error').html(
+            'Please use a username between 3 and 10 characters');
+            } else {
+                console.log("submitting newhs")
+                $('.error').html();
+                $.ajax({
+                    url: "{% url new_hs %}",
+                    data: {'username':username},
+                    type: 'post',
+                    async: 'false',
+                    success: function(data) {
+                        console.log("fading out");
+                        $('.newhs').fadeOut('slow', function() {
+                            $('.hs-content').html(data);
+                        });
+                    },
+                    error: function() {
+                    },
+                });
+            } 
+         });
+    }
+}
+
+
+var game = {
+
+    startGame: function() {
+    	this.time =null;
+    	this.timepassed = 0;
+    	this.timerId =null;
+    	this.animate=null;
+    	this.posX= 0;
+    	this.posY=0;
+    	this.timepassed= 0;
+    	
+    	$('#start-button').hide();
+    	$('#goal-button').show();
+		
+		// start timer
+		game.time = game.get_time();
+		// show timer
+		game.timerId = setInterval(function(){
+			timer =document.getElementById("time");  //Find an element
+			timer.innerHTML= ( (game.get_time() - game.time).toFixed(2) );
+		},10);
+    	
+    	$('#goal-button').hover(function(){
+			game.animate = setInterval(function(){
+				$('#goal-button').stop();
+				// animate box
+				var ranX = Math.floor((Math.random()*500)-250);
+				var ranY = Math.floor((Math.random()*500)-250);
+				
+				var x = document.getElementById('goal-button').offsetLeft;
+				var y = document.getElementById('goal-button').offsetTop;
+				
+				if( (x - (ranX/20)) < 0 ){
+					ranX = ranX * -1;
+				}
+				
+				if( (y + (ranY/20)) < 0 ){
+					ranY = ranY * -1;
+				}
+				$('#goal-button').animate({left:(ranX + 'px'),top:(ranY + 'px')},2000);
+			},250);
+    	}, function(){
+    		$('#goal-button').stop();
+    		game.timepassed = game.get_time() - game.time;
+			$('.return-splash').show();
+			$(this).unbind('mouseenter mouseleave');
+			clearInterval(game.timerId);
+			clearInterval(game.animate);
+			GameOver.gameOver();
+    	});
+    },
+    
+    get_time: function() { 
+        return new Date().getTime() / 1000; 
+    },
+} 
+
+
+

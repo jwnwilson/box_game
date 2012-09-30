@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="hs-container">
+    <div class="hs-table"> 
+        <table border="1" cellspacing="0">
+            <tr>
+                <th>Name</th>
+                <th>Time (sec)</th>
+            </tr>
+            {% for entry in hs %}
+                <tr>
+                    <td>{{ entry.username }}</td>
+                    <td>{{ entry.timepassed }} </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

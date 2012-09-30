@@ -1,0 +1,38 @@
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+
+<div class="gameover_info">
+    {% if go.new_hs %}
+		<img src="{{ STATIC_PREFIX }}img/newhighscore.png" alt="highscore" />
+		<h1> You survived {{ go.timepassed }} seconds!</h1>
+        <div class="newhs">
+            <div class="error"></div>
+            <input id="id_username" type="text" name="username" maxlength="10" />
+            <br />
+            <button class="hs_submit" type="submit">Submit Username for High Score</button> 
+        </div>
+	{% else %}
+		<img src="{{ STATIC_PREFIX }}img/betterlucknexttime.png" alt="betterlucknextime" />
+		<h1> You didn't survive long enough to enter a high score! </h1>
+	{% endif %}
+</div>
+<div class="playagain">
+    <a class="newgame" id="gorestart" href="/"><img 
+	src="{{ STATIC_PREFIX }}img/playagain.png" alt="returnSplash" /></a>
+</div>
+<div class="hs-content">
+    <div class="hs-container">
+        <table border="1" cellspacing="0">
+            <tr>
+                <th>Name</th>
+                <th>Time (sec)</th>
+            </tr>
+            {% for entry in hs %}
+                <tr>
+                    <td>{{ entry.username }}</td>
+                    <td>{{ entry.timepassed }} </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

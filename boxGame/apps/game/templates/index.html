@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block headscript %}
+<script type="text/javascript">
+    //<![CDATA[
+        {% include 'boxGame.js' %}
+    //]]>
+</script>
+{% endblock %}
+
+{% block container %}
+<div class="splash">
+	<div class="spash-image">
+		<img src="{{ STATIC_PREFIX }}img/Splash.png" style="" />
+	</div>
+	<div class="spash-buttons">
+        <div class="new">
+            <a href="javascript:void(0)"><img class="start-image" 
+            src="{{ STATIC_PREFIX }}img/newgame_b.png" alt="newgame" /></a>
+        </div>
+    </div>
+    <div class="spash-buttons">
+        <div class="highscore">
+            <a href="javascript:void(0)"><img class="start-image"
+            src="{{ STATIC_PREFIX }}img/highscores.png" alt="newgame" /></a>
+        </div>
+    </div>
+</div>
+<div class="main"> 
+	<p>Instructions - Click start and keep your mouse on the goal as long as possible!</p>
+	<div class="Timer">
+		<p>Time: <span id="time"></span>  </p>	
+	</div>
+	<div class="main-buttons">
+        <div class="main-button" id= "start-button">
+        	<div class="anchor-div">
+        		<a class= "main-anchor" href="javascript:void(0)"><img class="main-image" 
+        		src="{{ STATIC_PREFIX }}img/start.png" alt="newgame" /></a>
+        	</div>
+        </div>
+        <div class="main-button" id= "goal-button" style="background:red;" >
+        	<div class="anchor-div">
+            	<a class= "main-anchor"  href="javascript:void(0)"><img class="main-image" 
+        		src="{{ STATIC_PREFIX }}img/goal.png" alt="newgame" /></a>
+			</div>
+        </div>
+    </div>
+	<div class="highscore">
+            <a href="javascript:void(0)"><img 
+            src="{{ STATIC_PREFIX }}img/highscores.png" alt="newgame" /></a>
+	</div>
+</div>
+<div class="gameover"></div>
+<div class="hs">
+    <div class="hs-header">
+    	<p>Highscores</p>
+    </div>
+    <div class="hs-content"></div>
+</div>
+{% endblock %}
